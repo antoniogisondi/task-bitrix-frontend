@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
@@ -120,3 +121,14 @@ function App() {
 }
 
 export default App
+=======
+import React from 'react'
+
+function App() {
+  return (
+    <div>App</div>
+  )
+}
+
+export default App
+>>>>>>> d06b3e4 (fix scaffholding to init)
