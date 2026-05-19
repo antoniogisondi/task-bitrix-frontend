@@ -8,9 +8,18 @@ export const getTasks = async () => {
         }
     })
 
-   console.log('HEADERS:', response.headers)
-console.log('CONTENT TYPE:', response.headers['content-type'])
-console.log('RAW DATA:', response.data)
+    return response.data.tasks
+}
 
-    return response.data.tasks || []
+export const getTaskById = async (taskId) => {
+  const { data } = await API.post('/get_task.php', {
+    task_id: taskId
+  })
+
+  return data.task
+}
+
+export const createTask = async (taskData) => {
+    const {data} = await API.post('/create_task.php', taskData)
+    return data
 }

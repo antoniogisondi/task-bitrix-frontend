@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { getTasks } from '../../services/taskService'
+import TaskById from '../TaskById/TaskById'
 
 function Task() {
   const [tasks, setTasks] = useState([])
@@ -34,6 +35,8 @@ function Task() {
   return (
     <div>
       <h1>Task</h1>
+
+      <TaskById/>
 
       {tasks.length === 0 && <p>Nessun task trovato.</p>}
 
