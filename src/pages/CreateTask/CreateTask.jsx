@@ -81,117 +81,172 @@ function CreateTask() {
   }
 
    return (
-    <div>
-      <h1>Crea nuovo task</h1>
+  <div className="min-h-screen bg-gray-50 flex items-center justify-center py-10 px-4">
+    <div className="bg-white rounded-2xl shadow-md p-8 w-full max-w-xl">
 
-      {message && <p style={{ color: 'green' }}>{message}</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-6">
+        <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-orange-500">
+          <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+              d="M12 4v16m8-8H4" />
+          </svg>
+        </div>
+        <h1 className="text-xl font-semibold text-gray-800">Crea nuovo incarico</h1>
+      </div>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Titolo</label>
+      {/* Messaggi feedback */}
+      {message && (
+        <div className="mb-4 px-4 py-3 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm">
+          ✅ {message}
+        </div>
+      )}
+      {error && (
+        <div className="mb-4 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+          ❌ {error}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+
+        {/* Titolo */}
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">Titolo <span className="text-red-500">*</span></label>
           <input
             type="text"
             name="title"
             value={formData.title}
             onChange={handleChange}
             required
+            placeholder="Inserisci il titolo dell'incarico"
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition"
           />
         </div>
 
-        <div>
-          <label>Descrizione</label>
+        {/* Descrizione */}
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">Descrizione <span className="text-red-500">*</span></label>
           <textarea
             name="description"
             value={formData.description}
             onChange={handleChange}
             required
+            rows={4}
+            placeholder="Descrivi l'incarico..."
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition resize-none"
           />
         </div>
 
-        <div>
-          <label>ID Responsabile</label>
-          <input
-            type="number"
-            name="responsible_id"
-            value={formData.responsible_id}
-            onChange={handleChange}
-            required
-          />
+        {/* Responsabile + Scadenza affiancati */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">ID Responsabile <span className="text-red-500">*</span></label>
+            <input
+              type="number"
+              name="responsible_id"
+              value={formData.responsible_id}
+              onChange={handleChange}
+              required
+              placeholder="Es. 11"
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">Scadenza <span className="text-red-500">*</span></label>
+            <input
+              type="datetime-local"
+              name="deadline"
+              value={formData.deadline}
+              onChange={handleChange}
+              required
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition"
+            />
+          </div>
         </div>
 
-        <div>
-          <label>Scadenza</label>
-          <input
-            type="datetime-local"
-            name="deadline"
-            value={formData.deadline}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div>
-          <label>Azienda</label>
+        {/* Azienda */}
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">Azienda</label>
           <input
             type="text"
             name="company"
             value={formData.company}
             onChange={handleChange}
+            placeholder="Es. Bismatica"
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition"
           />
         </div>
 
-        <div>
-          <label>Partecipanti</label>
-          <input
-            type="text"
-            name="participants"
-            value={formData.participants}
-            onChange={handleChange}
-            placeholder="Esempio: 12,13,14"
-          />
-        </div>
-
-        <div>
-          <label>Osservatori</label>
-          <input
-            type="text"
-            name="auditors"
-            value={formData.auditors}
-            onChange={handleChange}
-            placeholder="Esempio: 15,16"
-          />
-        </div>
-
-        <div>
-          <label>
+        {/* Partecipanti + Osservatori affiancati */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">Partecipanti</label>
             <input
-              type="checkbox"
-              name="allow_time_tracking"
-              checked={formData.allow_time_tracking}
+              type="text"
+              name="participants"
+              value={formData.participants}
               onChange={handleChange}
+              placeholder="Es. 12,13,14"
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition"
             />
-            Abilita gestione tempo
-          </label>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">Osservatori</label>
+            <input
+              type="text"
+              name="auditors"
+              value={formData.auditors}
+              onChange={handleChange}
+              placeholder="Es. 15,16"
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition"
+            />
+          </div>
         </div>
 
-        <div>
-          <label>Firma incarico</label>
+        {/* Firma */}
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">Firma incarico</label>
           <input
             type="text"
             name="signature"
             value={formData.signature}
             onChange={handleChange}
             placeholder="Es. Firma da acquisire"
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition"
           />
         </div>
 
-        <button type="submit" disabled={loading}>
-          {loading ? 'Creazione in corso...' : 'Crea task'}
+        {/* Checkbox gestione tempo */}
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            id="allow_time_tracking"
+            name="allow_time_tracking"
+            checked={formData.allow_time_tracking}
+            onChange={handleChange}
+            className="w-4 h-4 accent-orange-500 cursor-pointer"
+          />
+          <label htmlFor="allow_time_tracking" className="text-sm text-gray-700 cursor-pointer">
+            Abilita gestione tempo
+          </label>
+        </div>
+
+        {/* Bottone submit */}
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white font-medium py-2.5 rounded-lg transition-colors duration-200 text-sm"
+        >
+          {loading ? '⏳ Creazione in corso...' : '➕ Crea incarico'}
         </button>
+
       </form>
     </div>
-  )
+  </div>
+)
+
 }
 
 export default CreateTask

@@ -23,3 +23,11 @@ export const createTask = async (taskData) => {
     const {data} = await API.post('/create_task.php', taskData)
     return data
 }
+
+export const viewTaskById = async (taskId) => {
+  const {data} = await API.post('/get_task.php', {
+    task_id: taskId
+  })
+
+  return data.task
+}
