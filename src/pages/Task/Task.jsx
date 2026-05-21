@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { getTasks } from '../../services/taskService'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import TaskById from '../TaskById/TaskById'
 import StatusBadge from '../../components/StatusBadge/StatusBadge'
+
 
 function Task() {
   const [tasks, setTasks] = useState([])
