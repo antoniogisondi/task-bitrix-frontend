@@ -31,3 +31,12 @@ export const viewTaskById = async (taskId) => {
 
   return data.task
 }
+
+export const updateTask = async (taskId, taskData) => {
+  const {data} = await API.post('/update_task.php', {
+    taskId: taskId,
+    ...taskData
+  })
+
+  return data
+}
