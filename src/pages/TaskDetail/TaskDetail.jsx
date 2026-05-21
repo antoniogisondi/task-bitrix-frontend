@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
-import { viewTaskById } from '../../services/taskService'
+import { useParams, Link, useNavigate } from 'react-router-dom'
+import { viewTaskById, deleteTask } from '../../services/taskService'
 import StatusBadge from '../../components/StatusBadge/StatusBadge'
 import DetailRow from '../../components/DetailRow/DetailRow'
 
 function TaskDetail() {
   const { id }          = useParams()
+  const navigate = useNavigate()
   const [task, setTask] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError]     = useState(null)
@@ -20,6 +21,30 @@ function TaskDetail() {
     })
     .finally(() => setLoading(false))
 }, [id])
+
+const handleDelete = async () => {
+  const confirmDelete = window.confirm(
+    `Sei sicuro di voler eliminare il task #${task.id}? Questa operazione non può essere annullata.`
+  )
+
+  if (!confirmDelete) return
+
+  setLoading(true)
+  setError(null)
+
+  try {
+    await deleteTask(task.id)
+
+    navigate('/task')
+  } catch (err) {
+    setError(
+      err.response?.data?.message ||
+      err.message ||
+      'Errore durante l’eliminazione del task.'
+    )
+    setLoading(false)
+  }
+}
 
   // --- Loading ---
   if (loading) {
@@ -108,6 +133,14 @@ function TaskDetail() {
 
           {/* Azioni */}
           <div className="flex gap-3 pt-4 border-t border-gray-100">
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700"
+            >
+              Elimina task
+            </button>
+            
             <Link
               to={`/task/${task.id}/edit`}
               className="flex-1 text-center bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium py-2.5 rounded-lg transition-colors duration-200"

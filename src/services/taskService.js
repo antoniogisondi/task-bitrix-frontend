@@ -40,3 +40,17 @@ export const updateTask = async (taskId, taskData) => {
 
   return data
 }
+
+export const deleteTask = async (taskId) => {
+  const {data} = await API.post('/delete_task.php', {
+    taskId: taskId
+  })
+
+  console.log(data)
+
+  if (!data.success) {
+    throw new Error(data.message || 'Errore durante l’eliminazione del task')
+  }
+
+  return data
+}

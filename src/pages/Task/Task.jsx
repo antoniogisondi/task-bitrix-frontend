@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { getTasks } from '../../services/taskService'
 import { Link, useParams } from 'react-router-dom'
-import TaskById from '../../components/TaskById/TaskById'
 import StatusBadge from '../../components/StatusBadge/StatusBadge'
+import TaskById from '../../components/TaskById/TaskById'
 
 
 function Task() {
