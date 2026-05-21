@@ -11,7 +11,8 @@ function CreateTask() {
     participants: '',
     auditors: '',
     allow_time_tracking: true,
-    signature: ''
+    signature: '',
+    status: ''
   })
 
   const [loading, setLoading] = useState(false)
@@ -54,7 +55,8 @@ function CreateTask() {
         participants: parseIds(formData.participants),
         auditors: parseIds(formData.auditors),
         allow_time_tracking: formData.allow_time_tracking,
-        signature: formData.signature
+        signature: formData.signature,
+        status: Number(formData.status)
       }
 
       const result = await createTask(payload)
@@ -232,6 +234,18 @@ function CreateTask() {
             Abilita gestione tempo
           </label>
         </div>
+
+        <select
+          name="status"
+          value={formData.status}
+          onChange={handleChange}
+        >
+          <option value="2">Da fare</option>
+          <option value="3">In corso</option>
+          <option value="4">In attesa di controllo</option>
+          <option value="5">Completato</option>
+          <option value="6">Rinviato</option>
+        </select>
 
         {/* Bottone submit */}
         <button

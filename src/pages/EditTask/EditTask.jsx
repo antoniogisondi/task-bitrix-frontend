@@ -15,7 +15,8 @@ function EditTask() {
     participants: '',
     auditors: '',
     allow_time_tracking: true,
-    signature: ''
+    signature: '',
+    status: 2
   })
 
   const [loading, setLoading] = useState(true)
@@ -63,11 +64,12 @@ function EditTask() {
           description: task.description || '',
           responsible_id: task.responsibleId || '',
           deadline: formatForInput(task.deadline),
-          company: '',
+          company: task.company || '',
           participants: task.accomplices?.join(', ') || '',
           auditors: task.auditors?.join(', ') || '',
           allow_time_tracking: task.allowTimeTracking === 'Y',
-          signature: ''
+          signature: task.signature || '',
+          status: task.status || 2,
         })
       })
       .catch((err) => {
@@ -104,7 +106,8 @@ function EditTask() {
         participants: parseIds(formData.participants),
         auditors: parseIds(formData.auditors),
         allow_time_tracking: formData.allow_time_tracking,
-        signature: formData.signature
+        signature: formData.signature,
+        status: Number(formData.status || 2)
       }
 
       await updateTask(id, payload)
@@ -296,6 +299,25 @@ function EditTask() {
               />
               Abilita gestione tempo
             </label>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium text-slate-700">
+                Stato incarico
+              </label>
+
+              <select
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+              >
+                <option value="2">Da fare</option>
+                <option value="3">In corso</option>
+                <option value="4">In attesa di controllo</option>
+                <option value="5">Completato</option>
+                <option value="6">Rinviato</option>
+              </select>
+            </div>
 
             <div className="flex flex-col gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end">
               <button

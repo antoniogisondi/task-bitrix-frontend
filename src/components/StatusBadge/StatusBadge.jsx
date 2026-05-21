@@ -2,11 +2,11 @@ import React from 'react'
 
 function StatusBadge({ status }) {
   const map = {
-    1: { label: 'Da iniziare', color: 'bg-gray-100 text-gray-600' },
-    2: { label: 'In corso',    color: 'bg-blue-100 text-blue-600' },
-    3: { label: 'Completato',  color: 'bg-green-100 text-green-600' },
-    4: { label: 'In attesa',   color: 'bg-yellow-100 text-yellow-600' },
-    5: { label: 'Declinato',   color: 'bg-red-100 text-red-600' },
+    2: { label: 'Da iniziare', color: 'bg-gray-100 text-gray-600' },
+    3: { label: 'In corso',    color: 'bg-blue-100 text-blue-600' },
+    4: { label: 'In attesa di controllo',   color: 'bg-yellow-100 text-yellow-600' },
+    5: { label: 'Completato',  color: 'bg-green-100 text-green-600' },
+    6: { label: 'Rinviato',   color: 'bg-red-100 text-red-600' },
   }
 
   const { label, color } = map[status] ?? { label: `Stato ${status}`, color: 'bg-gray-100 text-gray-500' }
