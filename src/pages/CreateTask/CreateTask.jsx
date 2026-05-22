@@ -1,11 +1,13 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { createTask } from '../../services/taskService'
+import { getUsers } from '../../services/userService'
 
 function CreateTask() {
+    const [users, setUsers] = useState([])
     const [formData, setFormData] = useState({
     title: '',
     description: '',
-    responsible_id: 11,
+    responsible_id: '',
     deadline: '',
     company: '',
     participants: '',
@@ -16,8 +18,24 @@ function CreateTask() {
   })
 
   const [loading, setLoading] = useState(false)
+  const [usersLoading, setUsersLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    setUsersLoading(true)
+
+    getUsers()
+      .then((users) => {
+        setUsers(users)
+      })
+      .catch((err) => {
+        console.error('Errore caricamento utenti:', err)
+      })
+      .finally(() => {
+        setUsersLoading(false)
+      })
+  }, [])
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -66,7 +84,7 @@ function CreateTask() {
       setFormData({
         title: '',
         description: '',
-        responsible_id: 11,
+        responsible_id: '',
         deadline: '',
         company: '',
         participants: '',
@@ -142,16 +160,24 @@ function CreateTask() {
         {/* Responsabile + Scadenza affiancati */}
         <div className="grid grid-cols-2 gap-4">
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-gray-700">ID Responsabile <span className="text-red-500">*</span></label>
-            <input
-              type="number"
-              name="responsible_id"
-              value={formData.responsible_id}
-              onChange={handleChange}
-              required
-              placeholder="Es. 11"
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition"
-            />
+            <label className="text-sm font-medium text-gray-700">Responsabile<span className="text-red-500">*</span></label>
+             <select
+                name="responsible_id"
+                value={formData.responsible_id}
+                onChange={handleChange}
+                required
+                className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+              >
+                  <option value="">
+                    {usersLoading ? 'Caricamento utenti...' : 'Seleziona responsabile'}
+                  </option>
+
+                {users.map((user) => (
+                  <option key={user.ID} value={user.ID}>
+                    {`${user.NAME || ''} ${user.LAST_NAME || ''}`.trim() || user.EMAIL}
+                  </option>
+                ))}
+            </select>
           </div>
 
           <div className="flex flex-col gap-1">

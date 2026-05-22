@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { viewTaskById, deleteTask, changeTaskAction } from '../../services/taskService'
+import { getUsers } from '../../services/userService'
 import StatusBadge from '../../components/StatusBadge/StatusBadge'
 import DetailRow from '../../components/DetailRow/DetailRow'
 
