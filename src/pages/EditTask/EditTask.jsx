@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { updateTask, viewTaskById } from '../../services/taskService'
+import { getUsers } from '../../services/userService'
 
 function EditTask() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const [users, setUsers] = useState([])
+  const [usersLoading, setUsersLoading] = useState(false)
 
   const [formData, setFormData] = useState({
     title: '',
@@ -79,6 +82,20 @@ function EditTask() {
         setLoading(false)
       })
   }, [id])
+
+  useEffect(() => {
+    setUsersLoading(true)
+    getUsers()
+      .then((users) => {
+        setUsers(users)
+      })
+      .catch((err) => {
+        console.error('Errore caricamento utenti:', err)
+      })
+      .finally(() => {
+        setUsersLoading(false)
+      })
+  }, [])
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -205,16 +222,25 @@ function EditTask() {
             <div className="grid gap-5 md:grid-cols-2">
               <div>
                 <label className="mb-1 block text-sm font-medium text-slate-700">
-                  ID responsabile
+                Responsabile
                 </label>
-                <input
-                  type="number"
+                <select
                   name="responsible_id"
                   value={formData.responsible_id}
                   onChange={handleChange}
                   required
                   className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
-                />
+                >
+                  <option value="">
+                    {usersLoading ? 'Caricamento utenti...' : 'Seleziona responsabile'}
+                  </option>
+
+                  {users.map((user) => (
+                    <option key={user.ID} value={user.ID}>
+                      {`${user.NAME || ''} ${user.LAST_NAME || ''}`.trim() || user.EMAIL}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div>

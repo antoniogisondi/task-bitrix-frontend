@@ -2,89 +2,119 @@ import React, { useEffect, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { viewTaskById, deleteTask, changeTaskAction } from '../../services/taskService'
 import { getUsers } from '../../services/userService'
+getCompanies
 import StatusBadge from '../../components/StatusBadge/StatusBadge'
 import DetailRow from '../../components/DetailRow/DetailRow'
+import { getCompanies } from '../../services/companyService'
 
 function TaskDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
   const [task, setTask] = useState(null)
+  const [companies, setCompanies] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  useEffect(() => {
-    viewTaskById(id)
-      .then((task) => {
-        setTask(task)
-      })
-      .catch((err) => {
-        setError(err.message || 'Errore durante il caricamento del task.')
-      })
-      .finally(() => setLoading(false))
-  }, [id])
+ 
 
-  const handleDelete = async () => {
-    const confirmDelete = window.confirm(
-      `Sei sicuro di voler eliminare il task #${task.id}? Questa operazione non può essere annullata.`
+const getCompanyIdFromTask = (task) => {
+  const crmTask = task?.ufCrmTask || []
+
+  const companyItem = Array.isArray(crmTask)
+    ? crmTask.find((item) => String(item).startsWith('CO_'))
+    : null
+
+  return companyItem ? companyItem.replace('CO_', '') : ''
+}
+
+useEffect(() => {
+  getCompanies()
+    .then(setCompanies)
+    .catch((err) => console.error('Errore caricamento aziende:', err))
+}, [])
+
+const companyId = getCompanyIdFromTask(task)
+
+const company = companies.find(
+  (company) => String(company.ID) === String(companyId)
+)
+
+const companyName = company?.TITLE || 'Nessuna azienda collegata'
+
+useEffect(() => {
+  viewTaskById(id)
+    .then((task) => {
+      setTask(task)
+    })
+    .catch((err) => {
+      setError(err.message || 'Errore durante il caricamento del task.')
+    })
+    .finally(() => setLoading(false))
+}, [id])
+
+
+const handleDelete = async () => {
+  const confirmDelete = window.confirm(
+    `Sei sicuro di voler eliminare il task #${task.id}? Questa operazione non può essere annullata.`
+  )
+
+  if (!confirmDelete) return
+
+  setLoading(true)
+  setError(null)
+
+  try {
+    await deleteTask(task.id)
+
+    navigate('/task')
+  } catch (err) {
+    setError(
+      err.response?.data?.message ||
+      err.message ||
+      'Errore durante l’eliminazione del task.'
     )
-
-    if (!confirmDelete) return
-
-    setLoading(true)
-    setError(null)
-
-    try {
-      await deleteTask(task.id)
-
-      navigate('/task')
-    } catch (err) {
-      setError(
-        err.response?.data?.message ||
-        err.message ||
-        'Errore durante l’eliminazione del task.'
-      )
-      setLoading(false)
-    }
+    setLoading(false)
   }
+}
 
-  const handleTaskAction = async (action) => {
-    try {
-      await changeTaskAction(task.id, action)
+const handleTaskAction = async (action) => {
+  try {
+    await changeTaskAction(task.id, action)
 
-      const updatedTask = await viewTaskById(task.id)
-      setTask(updatedTask)
-    } catch (err) {
-      setError(
-        err.response?.data?.message ||
-        err.message ||
-        'Errore durante il cambio stato del task.'
-      )
-    }
+    const updatedTask = await viewTaskById(task.id)
+    setTask(updatedTask)
+  } catch (err) {
+    setError(
+      err.response?.data?.message ||
+      err.message ||
+      'Errore durante il cambio stato del task.'
+    )
   }
+}
 
-  // --- Loading ---
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-400 text-sm animate-pulse">Caricamento incarico...</p>
+// --- Loading ---
+if (loading) {
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <p className="text-gray-400 text-sm animate-pulse">Caricamento incarico...</p>
+    </div>
+  )
+}
+
+// --- Errore ---
+if (error) {
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="bg-white rounded-2xl shadow-md p-8 text-center max-w-sm w-full">
+        <div className="text-4xl mb-3">⚠️</div>
+        <p className="text-red-600 text-sm mb-4">{error}</p>
+        <Link to="/task" className="text-orange-500 hover:underline text-sm">
+          ← Torna agli incarichi
+        </Link>
       </div>
-    )
-  }
-
-  // --- Errore ---
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="bg-white rounded-2xl shadow-md p-8 text-center max-w-sm w-full">
-          <div className="text-4xl mb-3">⚠️</div>
-          <p className="text-red-600 text-sm mb-4">{error}</p>
-          <Link to="/task" className="text-orange-500 hover:underline text-sm">
-            ← Torna agli incarichi
-          </Link>
-        </div>
-      </div>
-    )
-  }
+    </div>
+  )
+}
 
   // --- Dettaglio ---
   const deadline = task.deadline
@@ -124,7 +154,7 @@ function TaskDetail() {
           <div className="mb-6">
             <DetailRow icon="👤" label="Responsabile" value={task.responsible?.name} />
             <DetailRow icon="📅" label="Scadenza" value={deadline} />
-            <DetailRow icon="🏢" label="Azienda" value={task.company} />
+            <DetailRow icon="🏢" label="Azienda" value={companyName} />
             <DetailRow icon="✍️" label="Firma" value={task.signature} />
             <DetailRow
               icon="👥"

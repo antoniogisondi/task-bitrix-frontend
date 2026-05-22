@@ -1,15 +1,17 @@
 import React, {useState, useEffect} from 'react'
 import { createTask } from '../../services/taskService'
 import { getUsers } from '../../services/userService'
+import { getCompanies } from '../../services/companyService'
 
 function CreateTask() {
     const [users, setUsers] = useState([])
+    const [companies, setCompanies] = useState([])
     const [formData, setFormData] = useState({
     title: '',
     description: '',
     responsible_id: '',
     deadline: '',
-    company: '',
+    company_id: '',
     participants: '',
     auditors: '',
     allow_time_tracking: true,
@@ -19,6 +21,7 @@ function CreateTask() {
 
   const [loading, setLoading] = useState(false)
   const [usersLoading, setUsersLoading] = useState(false)
+  const [companiesLoading, setCompaniesLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
 
@@ -34,6 +37,21 @@ function CreateTask() {
       })
       .finally(() => {
         setUsersLoading(false)
+      })
+  }, [])
+
+    useEffect(() => {
+    setCompaniesLoading(true)
+
+    getCompanies()
+      .then((companies) => {
+        setCompanies(companies)
+      })
+      .catch((err) => {
+        console.error('Errore caricamento aziende:', err)
+      })
+      .finally(() => {
+        setCompaniesLoading(false)
       })
   }, [])
 
@@ -69,7 +87,7 @@ function CreateTask() {
         description: formData.description,
         responsible_id: Number(formData.responsible_id),
         deadline: formData.deadline,
-        company: formData.company,
+        company_id: formData.company_id ? Number(formData.company_id) : null,
         participants: parseIds(formData.participants),
         auditors: parseIds(formData.auditors),
         allow_time_tracking: formData.allow_time_tracking,
@@ -86,7 +104,7 @@ function CreateTask() {
         description: '',
         responsible_id: '',
         deadline: '',
-        company: '',
+        company_id: '',
         participants: '',
         auditors: '',
         allow_time_tracking: true,
@@ -196,14 +214,23 @@ function CreateTask() {
         {/* Azienda */}
         <div className="flex flex-col gap-1">
           <label className="text-sm font-medium text-gray-700">Azienda</label>
-          <input
-            type="text"
-            name="company"
-            value={formData.company}
-            onChange={handleChange}
-            placeholder="Es. Bismatica"
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition"
-          />
+          <select
+              name="company"
+              value={formData.company}
+              onChange={handleChange}
+              required
+              className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+            >
+                <option value="">
+                  {companiesLoading ? 'Caricamento aziende...' : 'Seleziona azienda'}
+                </option>
+
+              {companies.map((company) => (
+                <option key={company.ID} value={company.ID}>
+                  {`${company.TITLE}`}
+                </option>
+              ))}
+          </select>
         </div>
 
         {/* Partecipanti + Osservatori affiancati */}
